@@ -11,8 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Pin transitive dependency to patched version (addresses GHSA-37gx-xxp4-5rgx / GHSA-w3x6-4m5h-cxqf) -->
-    <PackageReference Include="System.Security.Cryptography.Xml" Version="10.0.6" />
+    <!-- Resolve ASP.NET Core assemblies from the shared framework (as WebApp.Api does) so NuGet prunes
+         stale transitive packages pulled in by Microsoft.Identity.Web, e.g. Microsoft.AspNetCore.DataProtection
+         and System.Security.Cryptography.Xml (GHSA-9mv3-2cwr-p262, GHSA-23rf-6693-g89p and related). -->
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
 </Project>

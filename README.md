@@ -1,5 +1,8 @@
 # Secure Agent Chat Web App
 
+> [!WARNING]
+> **For testing and demonstration purposes only.** This is a personal reference demo provided "as is" under the [MIT License](LICENSE), without warranty or support. It is not an official Microsoft product or sample, has not been through a production security review, and is not intended for production use. Review, test, and harden it before reusing any part of it, deploy only to non-production subscriptions, and never use real customer or personal data.
+
 A secure, Entra ID–authenticated chat front-end for Microsoft Foundry Agent Service agents. Users sign in with Microsoft Entra ID, chat with a Foundry agent through a streaming React UI, and — with the opt-in On-Behalf-Of (OBO) mode — the agent call runs under the **signed-in user's identity** instead of the app's managed identity, so per-user permissions and auditing carry through to the agent and its tools. Deploys to Azure Container Apps with a single `azd up`.
 
 > **Origin.** Based on the MIT-licensed [`microsoft-foundry/foundry-agent-webapp`](https://github.com/microsoft-foundry/foundry-agent-webapp) template, extended with options to reuse existing Entra app registrations and a unified (single-app) client mode for OBO.
@@ -469,9 +472,15 @@ This creates a backend API app registration with FIC, sets `api://{backendClient
     └── skills/                   # 18 on-demand AI assistant skills
 ```
 
+## Disclaimer
+
+This project is provided for testing, learning, and demonstration purposes only. It is not an official Microsoft product, sample, or service, and it is not supported under any Microsoft support program. Azure services, APIs, and pricing referenced here change over time — validate against current Microsoft Learn documentation before relying on any detail. Deploying it creates billable Azure resources; you are responsible for their cost, security, and cleanup.
+
 ## License
 
-MIT — see [LICENSE](LICENSE). This repository is derived from the
+Released under the [MIT License](LICENSE). Based on an upstream Microsoft sample; the original copyright notice is preserved.
+
+This repository is derived from the
 [`microsoft-foundry/foundry-agent-webapp`](https://github.com/microsoft-foundry/foundry-agent-webapp)
 template (original copyright notice retained). That template is published by Microsoft under the
 same MIT terms as the official Microsoft sample

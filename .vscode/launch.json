@@ -1,0 +1,51 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      // Launch ASP.NET Core API with debugger (C# Dev Kit)
+      // Uses the "http" profile from launchSettings.json → localhost:8080
+      "name": ".NET: Launch Backend",
+      "type": "dotnet",
+      "request": "launch",
+      "projectPath": "${workspaceFolder}/backend/WebApp.Api/WebApp.Api.csproj",
+      "preLaunchTask": "build-backend"
+    },
+    {
+      // Attach to an already-running dotnet process (e.g. dotnet watch)
+      // Use the process picker to select the correct process
+      "name": ".NET: Attach to Backend",
+      "type": "coreclr",
+      "request": "attach",
+      "processId": "${command:pickProcess}"
+    },
+    {
+      // Debug React frontend in Chrome
+      // Start the Vite dev server first (preLaunchTask), then open Chrome
+      "name": "Chrome: Frontend",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/frontend/src",
+      "sourceMaps": true,
+      "preLaunchTask": "Frontend: React Vite"
+    },
+    {
+      // Debug React frontend in Edge (alternative)
+      "name": "Edge: Frontend",
+      "type": "msedge",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/frontend/src",
+      "sourceMaps": true,
+      "preLaunchTask": "Frontend: React Vite"
+    }
+  ],
+  "compounds": [
+    {
+      // Launch backend API + Chrome frontend together
+      "name": "Full Stack Debug",
+      "configurations": [".NET: Launch Backend", "Chrome: Frontend"],
+      "stopAll": true
+    }
+  ]
+}

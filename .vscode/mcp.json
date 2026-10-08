@@ -1,0 +1,47 @@
+{
+  // ============================================
+  // MCP Server Configuration
+  // ============================================
+  // 
+  // This file configures Model Context Protocol (MCP) servers for VS Code.
+  // MCP servers extend Copilot's capabilities with external tools.
+  //
+  // See: https://code.visualstudio.com/docs/copilot/chat/mcp-servers
+  // ============================================
+
+  "servers": {
+    // ============================================
+    // Playwright Browser Automation
+    // ============================================
+    // 
+    // Provides browser automation tools for testing and web interaction.
+    // Uses smaller viewport (1024x768) to reduce screenshot token costs.
+    // Delegate multi-page testing to subagents to preserve parent context.
+    //
+    // Tools: browser_navigate, browser_snapshot, browser_click, etc.
+    // See: https://github.com/microsoft/playwright-mcp
+    // ============================================
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@latest",
+        "--viewport-size=1024,768"
+      ]
+    },
+
+    // ============================================
+    // Microsoft Learn Documentation
+    // ============================================
+    // 
+    // Search and fetch official Microsoft/Azure documentation.
+    // Provides code samples, tutorials, and API references.
+    //
+    // Tools: microsoft_docs_search, microsoft_docs_fetch, microsoft_code_sample_search
+    // See: https://learn.microsoft.com/en-us/training/support/mcp
+    // ============================================
+    "microsoftdocs": {
+      "type": "http",
+      "url": "https://learn.microsoft.com/api/mcp"
+    }
+  }
+}

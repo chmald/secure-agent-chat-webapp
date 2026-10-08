@@ -1,0 +1,124 @@
+{
+  // ============================================
+  // GitHub Copilot Configuration
+  // ============================================
+  "github.copilot.enable": {
+    "*": true
+  },
+  "github.copilot.chat.codeGeneration.useInstructionFiles": true,
+
+  // ============================================
+  // Agent & Chat Features (VS Code 1.106-1.109)
+  // ============================================
+
+  // Enable custom agents as subagents (allows agents to delegate to other agents)
+  // See: https://code.visualstudio.com/updates/v1_109#_control-how-custom-agents-are-invoked
+  "chat.customAgentInSubagent.enabled": true,
+
+  // Use custom agents with background agents
+  "github.copilot.chat.cli.customAgents.enabled": true,
+
+  // Enable built-in GitHub MCP Server for seamless GitHub integration
+  "github.copilot.chat.githubMcpServer.enabled": true,
+
+  // ============================================
+  // Agent Optimizations (1.109)
+  // ============================================
+
+  // Copilot Memory - stores and recalls context across sessions (Preview)
+  // See: https://code.visualstudio.com/updates/v1_109#_copilot-memory-preview
+  "github.copilot.chat.copilotMemory.enabled": true,
+
+  // Search subagent - isolated agent loop for iterative codebase searches (Experimental)
+  // See: https://code.visualstudio.com/updates/v1_109#_search-subagent-experimental
+  "github.copilot.chat.searchSubagent.enabled": true,
+
+  // Context editing for Anthropic models - manages longer conversations efficiently (Experimental)
+  // See: https://code.visualstudio.com/updates/v1_109#_anthropic-models
+  "github.copilot.chat.anthropic.contextEditing.enabled": true,
+
+  // ============================================
+  // Chat UX Features (1.109)
+  // ============================================
+
+  // Message steering and queueing - send follow-up messages while a request runs (Experimental)
+  // See: https://code.visualstudio.com/updates/v1_109#_message-steering-and-queueing-experimental
+  "chat.requestQueuing.enabled": true,
+
+  // Ask Questions tool - agent asks clarifying questions instead of guessing (Experimental)
+  // See: https://code.visualstudio.com/updates/v1_109#_ask-questions-tool-experimental
+  "chat.askQuestions.enabled": true,
+
+  // Agent status indicator in command center for session visibility
+  // See: https://code.visualstudio.com/updates/v1_109#_agent-status-indicator
+  "chat.agentsControl.enabled": true,
+
+  // Show chat title for easy session identification
+  "chat.viewTitle.enabled": true,
+
+  // Enable Agent Sessions view integration
+  "chat.viewSessions.enabled": true,
+
+  // ============================================
+  // Agent Customization (1.109)
+  // ============================================
+
+  // Agent hooks - run custom shell commands at agent lifecycle points (Preview)
+  // See: https://code.visualstudio.com/updates/v1_109#_agent-hooks-preview
+  "chat.hooks.enabled": true,
+
+  // Agent customization skill - teaches agent to help set up agents/skills/instructions (Experimental)
+  // See: https://code.visualstudio.com/updates/v1_109#_agent-customization-skill-experimental
+  "chat.agentCustomizationSkill.enabled": true,
+
+  // ============================================
+  // Inline Chat (1.109)
+  // ============================================
+
+  // Inline chat affordance - show gutter icon to trigger inline chat (Preview)
+  // See: https://code.visualstudio.com/updates/v1_109#_inline-chat-ux-revamp-preview
+  "inlineChat.affordance": "gutter",
+
+  // ============================================
+  // Terminal Tool Auto-Approval (Security)
+  // ============================================
+
+  // Enable terminal auto-approve for common safe commands
+  "chat.tools.terminal.enableAutoApprove": true,
+
+  // Auto-approve npm scripts defined in package.json (requires workspace trust)
+  "chat.tools.terminal.autoApproveWorkspaceNpmScripts": true,
+
+  // Prevent terminal tool commands from being added to shell history
+  "chat.tools.terminal.preventShellHistory": true,
+
+  // ============================================
+  // MCP Configuration
+  // ============================================
+
+  // Auto-start MCP servers when configuration changes
+  "chat.mcp.autostart": "newAndOutdated",
+
+  // ============================================
+  // Terminal
+  // ============================================
+
+  // Enable terminal IntelliSense (stable in VS Code 1.106+)
+  "terminal.integrated.suggest.enabled": true,
+
+  // Limit terminal scrollback to prevent overwhelming AI context
+  "terminal.integrated.scrollback": 500,
+
+  // ============================================
+  // Markdown Settings
+  // ============================================
+
+  // Disable all markdown validation (for instruction files)
+  "markdown.validate.enabled": false,
+  "markdown.validate.ignoredLinks": ["**"],
+
+  "[markdown]": {
+    "editor.defaultFormatter": null,
+    "editor.formatOnSave": false
+  }
+}

@@ -1,0 +1,229 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "languageVersion": "2.0",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.43.8.12551",
+      "templateHash": "649352569619803811"
+    }
+  },
+  "parameters": {
+    "environmentName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name suffix for the Entra app (e.g., environment name)"
+      }
+    },
+    "serviceManagementReference": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Service Management Reference GUID (required by some orgs)"
+      }
+    },
+    "enableObo": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Enable OBO backend API app registration for user-delegated access to Agent Service"
+      }
+    },
+    "useUnifiedAppClient": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "When true (with enableObo), the SPA and backend (OBO) share ONE app registration instead of two. Set via USE_UNIFIED_APP_CLIENT."
+      }
+    },
+    "existingSpaClientId": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Reuse an EXISTING SPA app registration (client ID) instead of creating one. Set via ENTRA_EXISTING_SPA_CLIENT_ID."
+      }
+    },
+    "existingBackendClientId": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Reuse an EXISTING backend (OBO) app registration (client ID) instead of creating one, in two-app mode. Set via ENTRA_EXISTING_BACKEND_CLIENT_ID."
+      }
+    }
+  },
+  "variables": {
+    "azureMachineLearningAppId": "18a66f5f-dbdf-4c17-9dd7-1634712a9cbe",
+    "azureMachineLearningUserImpersonationScopeId": "1a7925b5-f871-417a-9b8b-303f9f29fa10",
+    "chatReadWriteScopeId": "[guid(resourceGroup().id, parameters('environmentName'), 'Chat.ReadWrite')]",
+    "createSpaApp": "[empty(parameters('existingSpaClientId'))]",
+    "useSeparateBackend": "[and(parameters('enableObo'), not(parameters('useUnifiedAppClient')))]",
+    "createBackendApp": "[and(variables('useSeparateBackend'), empty(parameters('existingBackendClientId')))]",
+    "backendChatScopeId": "[guid(resourceGroup().id, parameters('environmentName'), 'Backend.Chat.ReadWrite')]"
+  },
+  "imports": {
+    "microsoftGraphV1": {
+      "provider": "MicrosoftGraph",
+      "version": "1.0.0"
+    }
+  },
+  "resources": {
+    "app": {
+      "condition": "[variables('createSpaApp')]",
+      "import": "microsoftGraphV1",
+      "type": "Microsoft.Graph/applications@v1.0",
+      "properties": {
+        "uniqueName": "[format('ai-foundry-agent-{0}', parameters('environmentName'))]",
+        "displayName": "[format('ai-foundry-agent-{0}', parameters('environmentName'))]",
+        "signInAudience": "AzureADMyOrg",
+        "serviceManagementReference": "[if(empty(parameters('serviceManagementReference')), null(), parameters('serviceManagementReference'))]",
+        "spa": {
+          "redirectUris": [
+            "http://localhost:5173",
+            "http://localhost:8080"
+          ]
+        },
+        "api": {
+          "knownClientApplications": [],
+          "oauth2PermissionScopes": [
+            {
+              "adminConsentDescription": "Allows the app to read and write chat messages",
+              "adminConsentDisplayName": "Read and write chat messages",
+              "id": "[variables('chatReadWriteScopeId')]",
+              "isEnabled": true,
+              "type": "User",
+              "userConsentDescription": "Allows the app to read and write your chat messages",
+              "userConsentDisplayName": "Read and write your chat messages",
+              "value": "Chat.ReadWrite"
+            }
+          ]
+        },
+        "requiredResourceAccess": "[if(and(parameters('enableObo'), parameters('useUnifiedAppClient')), createArray(createObject('resourceAppId', variables('azureMachineLearningAppId'), 'resourceAccess', createArray(createObject('id', variables('azureMachineLearningUserImpersonationScopeId'), 'type', 'Scope')))), createArray())]"
+      }
+    },
+    "sp": {
+      "condition": "[variables('createSpaApp')]",
+      "import": "microsoftGraphV1",
+      "type": "Microsoft.Graph/servicePrincipals@v1.0",
+      "properties": {
+        "appId": "[reference('app').appId]"
+      },
+      "dependsOn": [
+        "app"
+      ]
+    },
+    "backendApp": {
+      "condition": "[variables('createBackendApp')]",
+      "import": "microsoftGraphV1",
+      "type": "Microsoft.Graph/applications@v1.0",
+      "properties": {
+        "uniqueName": "[format('ai-foundry-agent-backend-{0}', parameters('environmentName'))]",
+        "displayName": "[format('ai-foundry-agent-backend-{0}', parameters('environmentName'))]",
+        "signInAudience": "AzureADMyOrg",
+        "serviceManagementReference": "[if(empty(parameters('serviceManagementReference')), null(), parameters('serviceManagementReference'))]",
+        "web": {
+          "redirectUris": []
+        },
+        "api": {
+          "knownClientApplications": [
+            "[if(variables('createSpaApp'), reference('app').appId, parameters('existingSpaClientId'))]"
+          ],
+          "oauth2PermissionScopes": [
+            {
+              "adminConsentDescription": "Allows the backend to access AI Agent Service on behalf of the user",
+              "adminConsentDisplayName": "Access AI Agent Service on behalf of user",
+              "id": "[variables('backendChatScopeId')]",
+              "isEnabled": true,
+              "type": "User",
+              "userConsentDescription": "Allows the app to access AI services on your behalf",
+              "userConsentDisplayName": "Access AI services on your behalf",
+              "value": "Chat.ReadWrite"
+            }
+          ]
+        },
+        "requiredResourceAccess": [
+          {
+            "resourceAppId": "[variables('azureMachineLearningAppId')]",
+            "resourceAccess": [
+              {
+                "id": "[variables('azureMachineLearningUserImpersonationScopeId')]",
+                "type": "Scope"
+              }
+            ]
+          }
+        ]
+      },
+      "dependsOn": [
+        "app"
+      ]
+    },
+    "backendSp": {
+      "condition": "[variables('createBackendApp')]",
+      "import": "microsoftGraphV1",
+      "type": "Microsoft.Graph/servicePrincipals@v1.0",
+      "properties": {
+        "appId": "[if(variables('createBackendApp'), reference('backendApp').appId, 'placeholder')]"
+      },
+      "dependsOn": [
+        "backendApp"
+      ]
+    },
+    "azureMachineLearningServiceSp": {
+      "condition": "[parameters('enableObo')]",
+      "existing": true,
+      "import": "microsoftGraphV1",
+      "type": "Microsoft.Graph/servicePrincipals@v1.0",
+      "properties": {
+        "appId": "[variables('azureMachineLearningAppId')]"
+      }
+    },
+    "oboAdminConsentUnified": {
+      "condition": "[and(and(parameters('enableObo'), parameters('useUnifiedAppClient')), variables('createSpaApp'))]",
+      "import": "microsoftGraphV1",
+      "type": "Microsoft.Graph/oauth2PermissionGrants@v1.0",
+      "properties": {
+        "clientId": "[reference('sp').id]",
+        "consentType": "AllPrincipals",
+        "resourceId": "[reference('azureMachineLearningServiceSp').id]",
+        "scope": "user_impersonation"
+      },
+      "dependsOn": [
+        "azureMachineLearningServiceSp",
+        "sp"
+      ]
+    },
+    "oboAdminConsentSeparate": {
+      "condition": "[variables('createBackendApp')]",
+      "import": "microsoftGraphV1",
+      "type": "Microsoft.Graph/oauth2PermissionGrants@v1.0",
+      "properties": {
+        "clientId": "[reference('backendSp').id]",
+        "consentType": "AllPrincipals",
+        "resourceId": "[reference('azureMachineLearningServiceSp').id]",
+        "scope": "user_impersonation"
+      },
+      "dependsOn": [
+        "azureMachineLearningServiceSp",
+        "backendSp"
+      ]
+    }
+  },
+  "outputs": {
+    "clientAppId": {
+      "type": "string",
+      "value": "[if(variables('createSpaApp'), reference('app').appId, parameters('existingSpaClientId'))]"
+    },
+    "appObjectId": {
+      "type": "string",
+      "value": "[if(variables('createSpaApp'), reference('app').id, '')]"
+    },
+    "backendClientAppId": {
+      "type": "string",
+      "value": "[if(not(parameters('enableObo')), '', if(parameters('useUnifiedAppClient'), if(variables('createSpaApp'), reference('app').appId, parameters('existingSpaClientId')), if(variables('createBackendApp'), reference('backendApp').appId, parameters('existingBackendClientId'))))]"
+    },
+    "backendAppObjectId": {
+      "type": "string",
+      "value": "[if(not(parameters('enableObo')), '', if(parameters('useUnifiedAppClient'), if(variables('createSpaApp'), reference('app').id, ''), if(variables('createBackendApp'), reference('backendApp').id, '')))]"
+    }
+  }
+}

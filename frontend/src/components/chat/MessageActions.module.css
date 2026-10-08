@@ -1,0 +1,74 @@
+.actionsBar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  margin-left: 8px;
+}
+
+.actionButton {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--colorNeutralForeground3);
+  cursor: pointer;
+  padding: 0;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.actionButton:hover {
+  background-color: var(--colorNeutralBackground1Hover);
+  color: var(--colorNeutralForeground1);
+}
+
+.actionButton:active {
+  background-color: var(--colorNeutralBackground1Pressed);
+}
+
+.actionButton:focus-visible {
+  outline: 2px solid var(--colorBrandStroke1);
+  outline-offset: 1px;
+}
+
+.feedbackSelected {
+  color: var(--colorBrandForeground1);
+  background-color: var(--colorBrandBackground2);
+}
+
+.feedbackSelected:hover {
+  color: var(--colorBrandForeground1);
+  background-color: var(--colorBrandBackground2Hover);
+}
+
+.copiedTooltip {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: var(--colorNeutralBackground1);
+  border: 1px solid var(--colorNeutralStroke1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  font-size: 11px;
+  color: var(--colorNeutralForeground1);
+  white-space: nowrap;
+  pointer-events: none;
+  animation: fadeInUp 0.15s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}

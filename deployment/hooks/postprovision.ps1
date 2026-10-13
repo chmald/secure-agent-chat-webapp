@@ -207,7 +207,7 @@ $frontendEnv = @"
 VITE_ENTRA_SPA_CLIENT_ID=$clientId
 VITE_ENTRA_TENANT_ID=$tenantId
 "@
-if ($backendClientId) {
+if ($backendClientId -and -not $useExistingEntraApps) {
     $frontendEnv += "`nVITE_ENTRA_BACKEND_CLIENT_ID=$backendClientId"
 }
 $frontendEnv | Out-File -FilePath "frontend/.env.local" -Encoding utf8 -Force
